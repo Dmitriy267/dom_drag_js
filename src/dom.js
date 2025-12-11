@@ -27,3 +27,25 @@ input.type = 'file';
 input.multiple = 'true';
 input.accept = '.jpg, .jpeg, .png';
 input.classList.add('input');
+const ul = document.createElement('ul');
+ul.classList.add('file-list');
+form.appendChild(ul);
+input.addEventListener('change', onChange);
+function onChange(e) {
+    const files = e.target.files;
+    console.log(files);
+    for (let file of files) {
+        const li = document.createElement('li');
+        li.classList.add('li');
+        console.log(file.name);
+        li.textContent =
+            `${file.name}` + ' ' + `${bytSize(file.size)}` + ` ${file.type}`;
+        ul.append(li);
+    }
+}
+
+function bytSize(byts, press = 2) {
+    const arr = ['Байт', 'КБ', 'МБ', 'ГБ', 'ТБ'];
+    const index = parseInt(Math.floor(Math.log(byts) / Math.log(1024)));
+    return Math.round(byts / Math.pow(1024, index), press) + ' ' + arr[index];
+}
