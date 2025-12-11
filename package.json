@@ -1,0 +1,20 @@
+{
+    "name": "dom_drag_js",
+    "private": true,
+    "version": "0.0.0",
+    "homepage": "https://dmitriy267.github.io/dom_drag_js/",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "predeploy": "npm run build",
+        "deploy": "npm run build && gh-pages -d dist"
+    },
+    "devDependencies": {
+        "vite": "^7.2.4"
+    },
+    "dependencies": {
+        "gh-pages": "^6.3.0"
+    }
+}
