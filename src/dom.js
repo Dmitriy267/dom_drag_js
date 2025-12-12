@@ -27,21 +27,54 @@ input.type = 'file';
 input.multiple = 'true';
 input.accept = '.jpg, .jpeg, .png';
 input.classList.add('input');
-const ul = document.createElement('ul');
-ul.classList.add('file-list');
-form.appendChild(ul);
 input.addEventListener('change', onChange);
+const submit = document.createElement('button');
+submit.type = 'submit';
+submit.textContent = 'Отправить';
+submit.classList.add('submit');
+form.appendChild(submit);
 function onChange(e) {
     const files = e.target.files;
-    console.log(files);
-    for (let file of files) {
-        const li = document.createElement('li');
-        li.classList.add('li');
-        console.log(file.name);
-        li.textContent =
-            `${file.name}` + ' ' + `${bytSize(file.size)}` + ` ${file.type}`;
-        ul.append(li);
+    const ul = document.createElement('ul');
+    ul.classList.add('file-list');
+    form.appendChild(ul);
+    if (files.length <= 5) {
+        for (let file of files) {
+            const li = document.createElement('li');
+            li.classList.add('li');
+
+            li.textContent =
+                `${file.name}` +
+                ' ' +
+                `${bytSize(file.size)}` +
+                ` ${file.type}`;
+            ul.appendChild(li);
+
+            const preview = document.createElement('img');
+            preview.src = URL.createObjectURL(file);
+            preview.classList.add('preview');
+            li.prepend(preview);
+            const btn = document.createElement('button');
+            btn.textContent = 'Удалить ';
+            btn.classList.add('btn');
+            li.appendChild(btn);
+            btn.addEventListener('click', btnClick);
+            const liCol = document.querySelectorAll('li');
+            console.log(liCol.length);
+        }
     }
+    if (files.length > 5) {
+        const limit = document.querySelector('ul');
+        limit.remove();
+        const p = document.createElement('p');
+        p.textContent = 'Превышено допустимое количество файлов: 5';
+        form.appendChild(p);
+    }
+}
+
+function btnClick() {
+    const li = document.querySelector('li');
+    li.remove();
 }
 
 function bytSize(byts, press = 2) {
