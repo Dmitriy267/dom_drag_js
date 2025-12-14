@@ -6,6 +6,7 @@ document.body.appendChild(div);
 h1.textContent = 'Drag and Drop';
 h1.classList.add('h1');
 form.classList.add('form');
+form.id = 'formElem';
 div.appendChild(h1);
 div.appendChild(form);
 const h2 = document.createElement('h2');
@@ -26,6 +27,7 @@ label.appendChild(input);
 input.type = 'file';
 input.multiple = 'true';
 input.accept = '.jpg, .jpeg, .png';
+input.name = 'file';
 input.classList.add('input');
 input.addEventListener('change', onChange);
 const submit = document.createElement('button');
@@ -82,3 +84,15 @@ function bytSize(byts, press = 2) {
     const index = parseInt(Math.floor(Math.log(byts) / Math.log(1024)));
     return Math.round(byts / Math.pow(1024, index), press) + ' ' + arr[index];
 }
+
+const formId = document.querySelector('#formElem');
+formId.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(formId);
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: formData,
+    });
+    let result = await response.json();
+    console.log(result);
+});
