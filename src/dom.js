@@ -49,6 +49,10 @@ h3.classList.add('h3');
 h3.textContent = 'Ваши файлы:';
 board.appendChild(h3);
 form.appendChild(board);
+const fileColumn = document.createElement('div');
+fileColumn.classList.add('file-column');
+board.appendChild(fileColumn);
+
 function btnClick() {
     const li = document.querySelector('li');
     li.remove();
@@ -64,6 +68,7 @@ const formId = document.querySelector('#formElem');
 formId.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(formId);
+    console.log(`form`, formId);
 
     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
@@ -129,7 +134,7 @@ window.addEventListener('dragover', (e) => {
 
 const ul = document.createElement('ul');
 ul.classList.add('file-list');
-board.appendChild(ul);
+fileColumn.appendChild(ul);
 
 function displayImagesFiles(files, max = 10485760) {
     if (files.length <= 5) {
@@ -204,15 +209,86 @@ function onChange(e) {
 
 //drag-n-drop-сортировка
 
-board.addEventListener('dragover', (e) => {
-    if (e.dataTransfer.types.includes('li')) {
-        e.preventDefault();
-    }
+const fileColumns = document.querySelectorAll('.file-column');
+
+fileColumns.forEach((column) => {
+    column.addEventListener('dragover', (e) => {
+        if (e.dataTransfer.types.includes('li')) {
+            e.preventDefault();
+        }
+    });
 });
 
-board.addEventListener('drop', (e) => {
+fileColumns.forEach((column) => {
+    column.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const draggedList = document.getElementById('dragged-list');
+        draggedList.remove();
+        column.children[0].appendChild(draggedList);
+    });
+});
+
+function makePlaceholder(draggedList) {
+    const placeholder = document.createElement('li');
+    placeholder.classList.add('placeholder');
+    placeholder.style.height = `${draggedList.offsetHeight}px`;
+    return placeholder;
+}
+
+function movePlaceholder(e) {
+    if (!e.dataTransfer.types.includes('li')) {
+        return;
+    }
     e.preventDefault();
     const draggedList = document.getElementById('dragged-list');
-    draggedList.remove();
-    board.children[1].appendChild(draggedList);
+    const column = e.currentTarget;
+    const lists = column.children[0];
+    const existingPlaceholder = column.querySelector('.placeholder');
+    if (existingPlaceholder) {
+        const placeholderRect = existingPlaceholder.getBoundingClientRect();
+        if (
+            placeholderRect.top <= e.clientY &&
+            placeholderRect.bottom >= e.clientY
+        ) {
+            return;
+        }
+    }
+    for (const list of lists.children) {
+        if (list.getBoundingClientRect().bottom >= e.clientY) {
+            if (list === existingPlaceholder) return;
+            existingPlaceholder?.remove();
+            if (
+                list === draggedList ||
+                list.previousElementSibling === draggedList
+            )
+                return;
+            lists.insertBefore(
+                existingPlaceholder ?? makePlaceholder(draggedList),
+                list
+            );
+            return;
+        }
+    }
+    existingPlaceholder?.remove();
+    if (lists.lastElementChild === draggedList) return;
+    lists.append(existingPlaceholder ?? makePlaceholder(draggedList));
+}
+
+fileColumns.forEach((column) => {
+    column.addEventListener('dragover', movePlaceholder);
+    column.addEventListener('dragleave', (event) => {
+        if (column.contains(event.relatedTarget)) return;
+        const placeholder = column.querySelector('.placeholder');
+        placeholder?.remove();
+    });
+    column.addEventListener('drop', (event) => {
+        event.preventDefault();
+
+        const draggedList = document.getElementById('dragged-list');
+        const placeholder = column.querySelector('.placeholder');
+        if (!placeholder) return;
+        draggedList.remove();
+        column.children[0].insertBefore(draggedList, placeholder);
+        placeholder.remove();
+    });
 });

@@ -120,3 +120,8 @@ p {
     text-align: center;
     color: #007195;
 }
+
+.placeholder {
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+}
