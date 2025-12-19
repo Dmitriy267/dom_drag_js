@@ -69,8 +69,6 @@ const formId = document.querySelector('#formElem');
 formId.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(formId);
-    console.log(`form`, formId);
-
     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: formData,
