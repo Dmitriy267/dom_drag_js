@@ -23,6 +23,7 @@ const label = document.createElement('label');
 label.classList.add('label');
 dropZone.appendChild(label);
 const span = document.createElement('span');
+span.id = 'preloadData';
 span.textContent = 'Загрузите файлы';
 label.appendChild(span);
 const input = document.createElement('input');
@@ -41,7 +42,6 @@ dropZone.appendChild(submit);
 const errorCol = document.createElement('span');
 dropZone.appendChild(errorCol);
 errorCol.classList.add('error');
-
 const board = document.createElement('div');
 board.classList.add('board');
 const h3 = document.createElement('h3');
@@ -65,6 +65,7 @@ function bytSize(byts, press = 2) {
 }
 
 const formId = document.querySelector('#formElem');
+
 formId.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(formId);
@@ -145,13 +146,13 @@ function displayImagesFiles(files, max = 10485760) {
                 spanErrorSize.textContent =
                     'Превышен максимальный размер файла';
                 const li = document.createElement('li');
-                li.classList.add('li');
+                li.classList.add('list');
                 li.appendChild(spanErrorSize);
                 li.appendChild(spanErrorSize);
                 ul.appendChild(li);
             } else {
                 const li = document.createElement('li');
-                li.classList.add('li');
+                li.classList.add('list');
                 li.draggable = 'true';
 
                 li.textContent =
@@ -172,12 +173,12 @@ function displayImagesFiles(files, max = 10485760) {
                 li.appendChild(btn);
                 btn.addEventListener('click', btnClick);
                 statusText('');
-                const lists = document.querySelectorAll('.li');
+                const lists = document.querySelectorAll('.list');
                 lists.forEach((list) => {
                     list.addEventListener('dragstart', (e) => {
                         list.id = 'dragged-list';
                         e.dataTransfer.effectAllowed = 'move';
-                        e.dataTransfer.setData('li', '');
+                        e.dataTransfer.setData('list', '');
                     });
                     list.addEventListener('draggend', (e) => {
                         list.removeAttribute('id');
@@ -196,15 +197,23 @@ function dropHandler(ev) {
     const files = [...ev.dataTransfer.items]
         .map((item) => item.getAsFile())
         .filter((file) => file);
-
-    displayImagesFiles(files);
+    setTimeout(() => {
+        displayImagesFiles(files);
+    }, 2000);
+    setTimeout(() => maveProgress(), 1000);
+    setTimeout(() => resetProgress(), 1500);
 }
 
 function statusText(text) {
     return (errorCol.textContent = text);
 }
+
 function onChange(e) {
-    displayImagesFiles(e.target.files);
+    setTimeout(() => {
+        displayImagesFiles(e.target.files);
+    }, 2000);
+    setTimeout(() => maveProgress(), 1000);
+    setTimeout(() => resetProgress(), 1500);
 }
 
 //drag-n-drop-сортировка
@@ -213,7 +222,7 @@ const fileColumns = document.querySelectorAll('.file-column');
 
 fileColumns.forEach((column) => {
     column.addEventListener('dragover', (e) => {
-        if (e.dataTransfer.types.includes('li')) {
+        if (e.dataTransfer.types.includes('list')) {
             e.preventDefault();
         }
     });
@@ -236,7 +245,7 @@ function makePlaceholder(draggedList) {
 }
 
 function movePlaceholder(e) {
-    if (!e.dataTransfer.types.includes('li')) {
+    if (!e.dataTransfer.types.includes('list')) {
         return;
     }
     e.preventDefault();
@@ -292,3 +301,25 @@ fileColumns.forEach((column) => {
         placeholder.remove();
     });
 });
+
+//создание прогресс-бара
+
+const progressBar = document.createElement('div');
+progressBar.classList.add('progress-bar');
+h3.insertAdjacentElement('afterend', progressBar);
+const progress = document.createElement('div');
+progress.classList.add('progress');
+progress.id = 'progress';
+progressBar.appendChild(progress);
+
+function maveProgress() {
+    let current = 0;
+    while (current < 200) {
+        current = current + 200;
+        progress.style.width = current + 'px';
+    }
+}
+
+function resetProgress() {
+    return (progress.style.width = 0 + 'px');
+}

@@ -59,7 +59,28 @@ p {
     width: 0;
     visibility: hidden;
 }
-
+.progress-bar {
+    background-color: #fefefe;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    margin: 15px;
+    height: 15px;
+    width: 200px;
+    max-width: 100%;
+}
+.progress {
+    background-color: #ad5389;
+    background: -webkit-linear-gradient(to bottom, #3c1053, #ad5389);
+    background: linear-gradient(to bottom, #3c1053, #ad5389);
+    border-radius: 3px;
+    height: 15px;
+    width: 0;
+    transition: width 0.5s ease-in;
+}
+.file-column {
+    max-width: 400px;
+    width: 100%;
+}
 .file-list {
     margin-top: 1.25rem;
     width: 100%;
@@ -110,10 +131,14 @@ p {
     color: red;
 }
 .board {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     width: 100%;
+    max-width: 444px;
     background-color: #ededed;
     border-radius: 10px;
-    padding: 0px 10px;
 }
 
 .h3 {
